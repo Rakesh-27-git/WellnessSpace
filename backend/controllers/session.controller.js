@@ -35,9 +35,9 @@ const getSessionById = asyncHandler(async (req, res) => {
 });
 
 const saveDraftSession = asyncHandler(async (req, res) => {
-  const { title, tags = [], jsonFileUrl, sessionId } = req.body;
+  const { title, tags = [], jsonUrl, sessionId } = req.body;
 
-  if (!title || !jsonFileUrl) {
+  if (!title || !jsonUrl) {
     throw new ApiError(400, "Title and JSON file URL are required");
   }
 
@@ -47,7 +47,7 @@ const saveDraftSession = asyncHandler(async (req, res) => {
     // Update existing draft
     session = await Session.findOneAndUpdate(
       { _id: sessionId, user: req.user._id },
-      { title, tags, jsonFileUrl, status: "draft", updatedAt: new Date() },
+      { title, tags, jsonUrl, status: "draft", updatedAt: new Date() },
       { new: true }
     );
 
@@ -60,7 +60,7 @@ const saveDraftSession = asyncHandler(async (req, res) => {
       user: req.user._id,
       title,
       tags,
-      jsonFileUrl,
+      jsonUrl,
       status: "draft",
     });
   }
@@ -70,27 +70,51 @@ const saveDraftSession = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, session, "Draft session saved successfully"));
 });
 
-const publishSession = asyncHandler(async (req, res) => {
-  const { sessionId } = req.body;
+const publishSession = async (req, res, next) => {
+  try {
+    const { sessionId, title, tags, jsonUrl } = req.body;
+    const userId = req.user._id;
 
-  if (!sessionId) {
-    throw new ApiError(400, "Session ID is required to publish");
+    if (!title || !tags || !jsonUrl) {
+      throw new ApiError(400, "Title, tags, and JSON URL are required");
+    }
+
+    let session;
+
+    if (sessionId) {
+      // 📝 Update existing draft
+      session = await Session.findOneAndUpdate(
+        { _id: sessionId, createdBy: userId },
+        {
+          title,
+          tags,
+          jsonUrl,
+          status: "published",
+        },
+        { new: true }
+      );
+
+      if (!session) {
+        throw new ApiError(404, "Draft session not found");
+      }
+    } else {
+      // ✨ Create and publish new session
+      session = await Session.create({
+        title,
+        tags,
+        jsonUrl,
+        status: "published",
+        user: userId,
+      });
+    }
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, session, "Session published successfully"));
+  } catch (error) {
+    next(error);
   }
-
-  const session = await Session.findOneAndUpdate(
-    { _id: sessionId, user: req.user._id },
-    { status: "published", updatedAt: new Date() },
-    { new: true }
-  );
-
-  if (!session) {
-    throw new ApiError(404, "Session not found or unauthorized");
-  }
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, session, "Session published successfully"));
-});
+};
 
 export {
   getPublicSessions,

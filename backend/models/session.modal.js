@@ -16,7 +16,7 @@ const sessionSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
-    jsonFileUrl: {
+    jsonUrl: {
       type: String,
       required: true,
     },
