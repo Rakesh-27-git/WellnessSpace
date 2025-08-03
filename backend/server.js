@@ -7,7 +7,7 @@ const app = express();
 
 app.use(cors({
   origin: process.env.NODE_ENV === "production" 
-    ? ["https://your-frontend-domain.com", "http://localhost:8080"] // Add your frontend domain here
+    ? ["https://wellness-space.vercel.app", "http://localhost:8080"] // Add your frontend domain here
     : "http://localhost:8080",
   credentials: true
 }));
