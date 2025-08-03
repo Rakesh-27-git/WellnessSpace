@@ -25,7 +25,7 @@ const MySessions = () => {
   useEffect(() => {
     const fetchSessions = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/my-sessions", { withCredentials: true });
+        const res = await axios.get("https://wellnessspace.onrender.com/api/my-sessions", { withCredentials: true });
         console.log("Fetched sessions:", res.data);
         const sessions = res.data.data;
 

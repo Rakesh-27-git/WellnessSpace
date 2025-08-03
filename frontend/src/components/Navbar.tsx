@@ -15,7 +15,7 @@ const Navbar = () => {
     try {
       // 🔒 Call backend logout API
       await axios.post(
-        "http://localhost:5000/api/users/logout",
+        "https://wellnessspace.onrender.com/api/users/logout",
         {},
         { withCredentials: true }
       );

@@ -6,7 +6,9 @@ import { errorMiddleware } from "./middlewares/error.middleware.js";
 const app = express();
 
 app.use(cors({
-  origin: "http://localhost:8080", // ✅ will use env in prod
+  origin: process.env.NODE_ENV === "production" 
+    ? ["https://your-frontend-domain.com", "http://localhost:8080"] // Add your frontend domain here
+    : "http://localhost:8080",
   credentials: true
 }));
 

@@ -30,7 +30,7 @@ const SessionEditor = () => {
     const fetchSession = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/my-sessions/${sessionId}`,
+          `https://wellnessspace.onrender.com/api/my-sessions/${sessionId}`,
           { withCredentials: true }
         );
         const { title, tags, jsonUrl } = res.data?.data || {};
@@ -72,7 +72,7 @@ const SessionEditor = () => {
     try {
       setIsAutoSaving(true);
       await axios.post(
-        "http://localhost:5000/api/my-sessions/save-draft",
+        "https://wellnessspace.onrender.com/api/my-sessions/save-draft",
         {
           sessionId: isEditMode ? sessionId : undefined,
           title: formData.title,
@@ -120,7 +120,7 @@ const SessionEditor = () => {
     try {
       setIsAutoSaving(true);
       const response = await axios.post(
-        "http://localhost:5000/api/my-sessions/save-draft",
+        "https://wellnessspace.onrender.com/api/my-sessions/save-draft",
         {
           sessionId: isEditMode ? sessionId : undefined,
           title: formData.title,
